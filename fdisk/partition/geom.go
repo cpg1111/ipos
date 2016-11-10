@@ -11,3 +11,7 @@ type Geometry struct {
 	Length int64
 	End    int64
 }
+
+func geometryErr(geom *Geometry, t *SysType) int64 {
+	return 0
+}
