@@ -33,7 +33,22 @@ func bestMatch(geom *Geometry, detected []*SysType, detectedErr []int64, count i
 }
 
 func (op *FSOps) probeSpecific(t *SysType, geom *Geometry) *SysType {
-	return nil
+	var result *Geometry
+	if t == nil {
+		panic("no type given")
+	}
+	if t.Ops.Probe == nil {
+		panic("no probe function given")
+	}
+	if geom == nil {
+		panic("no geometry given")
+	}
+	if geom.Dev.OpenCount > 0 {
+		panic("given geometry's device is open")
+	}
+	result = t.Ops.Probe(geom)
+	geom.Dev.Close()
+	return result
 }
 
 // Probe probes a filesystem
@@ -66,7 +81,9 @@ func (op *FSOps) Probe(geom *Geometry) (*SysType, error) {
 }
 
 // Clobber clobbers a file system
-func (op *FSOps) Clobber(geom *Geometry) {}
+func (op *FSOps) Clobber(geom *Geometry) {
+
+}
 
 // Open opens a block in the file system
 func (op *FSOps) Open(geom *Geometry) {}
