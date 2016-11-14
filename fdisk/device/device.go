@@ -1,9 +1,10 @@
 package device
 
 import (
-	"github.com/cpg1111/ipos/pedCHS"
+	"github.com/cpg1111/ipos/fdisk/pedCHS"
 )
 
+// Device is a struct representing a device on the machine
 type Device struct {
 	ArchSpecific   *interface{}
 	BIOSGeom       pedCHS.Geometry
@@ -24,6 +25,7 @@ type Device struct {
 	Type           Type
 }
 
+// New takes a path to a device and returns a pointer to the Device struct
 func New(devPath string) *Device {
-
+	return nil
 }

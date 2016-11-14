@@ -3,12 +3,11 @@ package disk
 import (
 	"errors"
 
-	"github.com/cpg1111/ipos/shared"
-	
 	"github.com/cpg1111/ipos/fdisk/device"
 	"github.com/cpg1111/ipos/fdisk/partition"
 )
 
+// Disk is a struct representing a disk
 type Disk struct {
 	Type         partition.Type
 	Size         uint
@@ -19,49 +18,51 @@ type Disk struct {
 	Specific     *interface{}
 }
 
+// New takes a *device.Device as an argument and returns a new *Disk
 func New(dev *device.Device) *Disk {
 	return nil
 }
 
-func NewExistingDisk(path string) *Disk {
+// Existing finds a disk based on path
+func Existing(path string) *Disk {
 	return nil
 }
 
-func (d *Disk) rawInsertBefore(old, new *partition.Partition) error {
+func (d *Disk) rawInsertBefore(old, newP *partition.Partition) error {
 	if old == nil {
 		return errors.New("no starting point given")
 	}
-	if new == nil {
+	if newP == nil {
 		return errors.New("no new partition given")
 	}
-	new.Prev = old.Prev
-	new.New = old
-	if new.Prev != nil {
-		new.Prev.Next = new
+	newP.Prev = old.Prev
+	newP.New = old
+	if newP.Prev != nil {
+		newP.Prev.Next = newP
 	} else {
 		if old.Type == partition.PED_PARTITION_LOGICAL {
-			d.extendedPartition().PartList = new
+			d.extendedPartition().PartList = newP
 		} else {
-			d.PartList = new
+			d.PartList = newP
 		}
 	}
-	old.Prev = new
+	old.Prev = newP
 	return nil
 }
 
-func (d *Disk) rawInsertAfter(old, new *partition.Partition) error {
+func (d *Disk) rawInsertAfter(old, newP *partition.Partition) error {
 	if old == nil {
 		return errors.New("no starting point given")
 	}
-	if new == nil {
+	if newP == nil {
 		return errors.New("no new partition given")
 	}
-	new.Prev = old
-	new.Next = old.Next
+	newP.Prev = old
+	newP.Next = old.Next
 	if old.Next != nil {
-		old.Next.Prev = new
+		old.Next.Prev = newP
 	}
-	old.Next = new
+	old.Next = newP
 	return nil
 }
 
