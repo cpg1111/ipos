@@ -1,3 +1,6 @@
 [submodule "ipfs"]
 	path = ipfs
 	url = git@github.com:cpg1111/go-ipfs.git
+[submodule "kernel"]
+	path = kernel
+	url = git@github.com:cpg1111/linux.git
