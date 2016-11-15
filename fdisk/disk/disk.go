@@ -11,7 +11,7 @@ import (
 type Disk struct {
 	Type         partition.Type
 	Size         uint
-	PartList         *partition.Partition
+	PartList     *partition.Partition
 	Dev          *device.Device
 	NeedsClobber bool
 	UpdateMode   bool
@@ -77,7 +77,7 @@ func (d *Disk) rawRemove(part *partition.Partition) error {
 		}
 		return nil
 	}
-	if part.Type == partition.PED_PARTITION_LOGICAL {
+	if part.Type == partition.PartitionLogical {
 		d.ExtendedPartition().PartList = part.Next
 	} else {
 		d.PartList = part.Next
@@ -90,8 +90,8 @@ func (d *Disk) rawRemove(part *partition.Partition) error {
 
 func (d *Disk) rawAdd(part *partition.Partition) error {
 	var (
-		walk *partition.Partition
-		last *partition.Partition
+		walk    *partition.Partition
+		last    *partition.Partition
 		extPart *partition.Partition
 	)
 	if !d.UpdateMode {
@@ -102,10 +102,12 @@ func (d *Disk) rawAdd(part *partition.Partition) error {
 		walk = extPart.PartList
 	}
 	walk = d.PartList
-	for walk; last = walk, walk = walk.Next {
+	for walk.Next != nil {
 		if walk.Geom.Start > part.Geom.End {
 			break
 		}
+		last = walk
+		walk = walk.Next
 	}
 	if walk != nil {
 		return d.rawInsertBefore(walk, part)
@@ -121,14 +123,16 @@ func (d *Disk) rawAdd(part *partition.Partition) error {
 	return nil
 }
 
+// CheckPartition checks a partition on the disk
 func (d *Disk) CheckPartition(part *partition.Partition) error {
 	return nil
 }
 
+// AddPartition adds a partition to the disk
 func (d *Disk) AddPartition(part *partition.Partition, constr *partition.Constraint) error {
 	var (
 		overlapConstraint *partition.Constraint
-		constraints *partition.Constraint
+		constraints       *partition.Constraint
 	)
 	if part == nil {
 		return errors.New("no partition provided for adding to disk")
