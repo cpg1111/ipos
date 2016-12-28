@@ -15,3 +15,12 @@ type IPV4 struct {
 	DMAC []byte
 	DIP  uint32
 }
+
+type TranslationTable map[string]map[IPV4]Header
+
+func (t TranslationTable) Translate(ip string) map[IPV4]Header {
+	if table[ip] != nil {
+		return table[ip]
+	}
+
+}
